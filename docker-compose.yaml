@@ -5,6 +5,8 @@ services:
     restart: always
     ports:
       - "8080:8080"
+    environment:
+      - spring.datasource.url=jdbc:mysql://device-manager-db:3306/device_manager_db
     depends_on:
       device-manager-db:
         condition: service_healthy
