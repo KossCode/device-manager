@@ -1,5 +1,6 @@
 package com.koss.devicemanager.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,6 +8,7 @@ import lombok.Setter;
 @Setter
 public class BrandDTO {
     private Long id;
+    @NotBlank(message = "Brand is required")
     private String name;
 }
 

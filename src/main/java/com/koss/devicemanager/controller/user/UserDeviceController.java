@@ -26,6 +26,7 @@ import java.util.List;
 @RequestMapping("/api/v1/user/devices")
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class UserDeviceController {
+    //todo: prevent XSS vulnerabilities
 
     private final DeviceService deviceService;
 

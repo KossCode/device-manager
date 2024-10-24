@@ -1,9 +1,9 @@
 package com.koss.devicemanager.service;
 
 import com.koss.devicemanager.dto.DeviceDTO;
+import com.koss.devicemanager.exception.DeviceNotFoundException;
 import com.koss.devicemanager.mapper.DeviceMapper;
 import com.koss.devicemanager.repository.DeviceRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +19,6 @@ public class DeviceServiceImpl implements DeviceService {
     private final DeviceRepository deviceRepository;
     private final BrandService brandService;
     private final DeviceMapper deviceMapper;
-
-    private static final String DEVICE_NOT_FOUND_MESSAGE = "Device with id %s not found";
 
     /**
      * Retrieves a paginated list of devices based on the provided pageable information.
@@ -55,7 +53,7 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public DeviceDTO findDeviceById(Long id) {
         var device = deviceRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(DEVICE_NOT_FOUND_MESSAGE, id)));
+                .orElseThrow(() -> new DeviceNotFoundException(id));
         return deviceMapper.toDTO(device);
     }
 
@@ -86,7 +84,7 @@ public class DeviceServiceImpl implements DeviceService {
     @Transactional
     public DeviceDTO updateDevice(Long id, DeviceDTO updatedDeviceDTO) {
         var existingDevice = deviceRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(DEVICE_NOT_FOUND_MESSAGE, id)));
+                .orElseThrow(() -> new DeviceNotFoundException(id));
 
         existingDevice.setName(updatedDeviceDTO.getName());
         existingDevice.setBrand(brandService.getOrCreateBrand(updatedDeviceDTO.getBrand()));
@@ -105,7 +103,7 @@ public class DeviceServiceImpl implements DeviceService {
     @Transactional
     public DeviceDTO patchDevice(Long id, DeviceDTO updatedDeviceDTO) {
         var existingDevice = deviceRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(DEVICE_NOT_FOUND_MESSAGE, id)));
+                .orElseThrow(() -> new DeviceNotFoundException(id));
 
         if (updatedDeviceDTO.getName() != null) {
             existingDevice.setName(updatedDeviceDTO.getName());
@@ -124,6 +122,7 @@ public class DeviceServiceImpl implements DeviceService {
      * @param id the ID of the device to delete
      */
     public void deleteDevice(Long id) {
+        //todo: findBy before delete
         deviceRepository.deleteById(id);
     }
 
