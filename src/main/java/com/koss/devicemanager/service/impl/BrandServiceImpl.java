@@ -1,10 +1,11 @@
-package com.koss.devicemanager.service;
+package com.koss.devicemanager.service.impl;
 
 import com.koss.devicemanager.dto.BrandDTO;
 import com.koss.devicemanager.entity.Brand;
 import com.koss.devicemanager.exception.BrandNotFoundException;
 import com.koss.devicemanager.mapper.BrandMapper;
 import com.koss.devicemanager.repository.BrandRepository;
+import com.koss.devicemanager.service.BrandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

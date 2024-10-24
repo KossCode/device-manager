@@ -1,9 +1,11 @@
-package com.koss.devicemanager.service;
+package com.koss.devicemanager.service.impl;
 
 import com.koss.devicemanager.dto.DeviceDTO;
 import com.koss.devicemanager.exception.DeviceNotFoundException;
 import com.koss.devicemanager.mapper.DeviceMapper;
 import com.koss.devicemanager.repository.DeviceRepository;
+import com.koss.devicemanager.service.BrandService;
+import com.koss.devicemanager.service.DeviceService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -23,7 +23,7 @@ import java.util.List;
 @RequestMapping("/api/v1/admin/devices")
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class AdminDeviceController {
-
+    //todo: swagger api
     private final DeviceService deviceService;
 
     @GetMapping
