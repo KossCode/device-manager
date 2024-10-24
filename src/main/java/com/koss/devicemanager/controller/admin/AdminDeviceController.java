@@ -40,7 +40,7 @@ public class AdminDeviceController {
     public ResponseEntity<ResponseWrapper<List<DeviceDTO>>> saveAllDevices(@RequestBody @Valid ValidList<DeviceDTO> devices) {
         List<DeviceDTO> savedDevices = deviceService.saveAllDevices(devices);
 
-        var response = new ResponseWrapper<>(savedDevices, "All devices created", true);
+        var response = new ResponseWrapper<>(savedDevices, "All devices created", true, savedDevices.size());
 
         return ResponseEntity.ok(response);
     }
