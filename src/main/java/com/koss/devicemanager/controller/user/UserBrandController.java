@@ -23,7 +23,7 @@ import java.util.List;
 @RequestMapping("/api/v1/user/brands")
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class UserBrandController {
-
+    //todo: swagger api
     private final BrandService brandService;
 
     @GetMapping

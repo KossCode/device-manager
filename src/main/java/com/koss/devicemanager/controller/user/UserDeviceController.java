@@ -27,7 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class UserDeviceController {
     //todo: prevent XSS vulnerabilities
-
+    //todo: swagger api
     private final DeviceService deviceService;
 
     private static final Integer MAX_ELEMENTS_PER_REQUEST = 50;
