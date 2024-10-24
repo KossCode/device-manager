@@ -2,9 +2,9 @@ package com.koss.devicemanager.service;
 
 import com.koss.devicemanager.dto.BrandDTO;
 import com.koss.devicemanager.entity.Brand;
+import com.koss.devicemanager.exception.BrandNotFoundException;
 import com.koss.devicemanager.mapper.BrandMapper;
 import com.koss.devicemanager.repository.BrandRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,8 +18,6 @@ public class BrandServiceImpl implements BrandService {
     private final BrandRepository brandRepository;
     private final BrandMapper brandMapper;
 
-    private static final String BRAND_NOT_FOUND_MESSAGE = "Brand with id %s not found";
-
     /**
      * Finds a brand by its unique ID.
      *
@@ -30,7 +28,7 @@ public class BrandServiceImpl implements BrandService {
     @Override
     public BrandDTO findById(Long id) {
         var brand = brandRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(BRAND_NOT_FOUND_MESSAGE, id)));
+                .orElseThrow(() -> new BrandNotFoundException(id));
         return brandMapper.toDTO(brand);
     }
 
@@ -88,7 +86,7 @@ public class BrandServiceImpl implements BrandService {
     @Override
     public BrandDTO updateBrand(Long id, BrandDTO updatedBrandDTO) {
         var existingBrand = brandRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(BRAND_NOT_FOUND_MESSAGE, id)));
+                .orElseThrow(() -> new BrandNotFoundException(id));
         existingBrand.setName(updatedBrandDTO.getName());
         return brandMapper.toDTO(brandRepository.save(existingBrand));
 
@@ -99,8 +97,11 @@ public class BrandServiceImpl implements BrandService {
      *
      * @param id the ID of the brand to delete
      */
+    @Override
     public void deleteBrand(Long id) {
-        brandRepository.deleteById(id);
+        var brand = brandRepository.findById(id)
+                .orElseThrow(() -> new BrandNotFoundException(id));
+        brandRepository.delete(brand);
     }
 }
 
