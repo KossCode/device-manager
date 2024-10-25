@@ -93,7 +93,7 @@ class UserDeviceControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.success", is(true)))
                 .andExpect(jsonPath("$.data.name", is("Device1")))
-                .andExpect(jsonPath("$.message", is("Successfully create device")));
+                .andExpect(jsonPath("$.message", is("Successfully created device")));
     }
 
     @Test
@@ -133,6 +133,6 @@ class UserDeviceControllerTest {
         mockMvc.perform(delete("/api/v1/user/devices/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success", is(true)))
-                .andExpect(jsonPath("$.message", is("Successfully deleted device with id1")));
+                .andExpect(jsonPath("$.message", is("Successfully deleted device with id 1")));
     }
 }

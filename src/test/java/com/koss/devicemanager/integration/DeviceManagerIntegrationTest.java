@@ -114,7 +114,7 @@ class DeviceManagerIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success", is(true)))
-                .andExpect(jsonPath("$.message", is("Successfully deleted device with id" + device.getId())));
+                .andExpect(jsonPath("$.message", is("Successfully deleted device with id " + device.getId())));
 
         assert (deviceRepository.findById(device.getId()).isEmpty());
     }
