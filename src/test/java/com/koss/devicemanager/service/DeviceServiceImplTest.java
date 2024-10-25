@@ -100,6 +100,18 @@ class DeviceServiceImplTest {
     }
 
     @Test
+    void findDevicesByBrand_ShouldReturnDevice() {
+        when(deviceRepository.findByBrandName("Test Brand")).thenReturn(List.of(device));
+        when(deviceMapper.toDTO(device)).thenReturn(deviceDTO);
+
+        List<DeviceDTO> result = deviceService.findDevicesByBrand("Test Brand");
+
+        assertEquals("Test Device", result.get(0).getName());
+        verify(deviceRepository).findByBrandName("Test Brand");
+        verify(deviceMapper).toDTO(device);
+    }
+
+    @Test
     void findDeviceById_ShouldThrowDeviceNotFoundException() {
         when(deviceRepository.findById(1L)).thenReturn(Optional.empty());
 
