@@ -156,9 +156,11 @@ class DeviceServiceImplTest {
 
     @Test
     void deleteDevice_ShouldDeleteDeviceById() {
+        when(deviceRepository.findById(1L)).thenReturn(Optional.of(device));
+
         deviceService.deleteDevice(1L);
 
-        verify(deviceRepository).deleteById(1L);
+        verify(deviceRepository).delete(device);
     }
 
     @Test

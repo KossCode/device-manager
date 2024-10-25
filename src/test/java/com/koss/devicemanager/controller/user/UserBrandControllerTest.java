@@ -93,7 +93,7 @@ class UserBrandControllerTest {
         mockMvc.perform(delete("/api/v1/user/brands/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success", is(true)))
-                .andExpect(jsonPath("$.message", is("Successfully deleted brand with id1")));
+                .andExpect(jsonPath("$.message", is("Successfully deleted brand with id 1")));
     }
 }
 
