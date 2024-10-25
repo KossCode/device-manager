@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -28,6 +29,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/admin/devices")
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@Slf4j
 public class AdminDeviceController {
     private final DeviceService deviceService;
 
@@ -38,11 +40,13 @@ public class AdminDeviceController {
     })
     @GetMapping
     public ResponseEntity<ResponseWrapper<List<DeviceDTO>>> getAllDevices() {
+        log.info("Fetching all devices.");
         List<DeviceDTO> devices = deviceService.findAllDevices();
 
         var response = new ResponseWrapper<>(
                 devices, "All devices retrieved", true, devices.size());
 
+        log.info("Successfully retrieved {} devices.", devices.size());
         return ResponseEntity.ok(response);
     }
 
@@ -54,10 +58,12 @@ public class AdminDeviceController {
     })
     @PostMapping("/bulk")
     public ResponseEntity<ResponseWrapper<List<DeviceDTO>>> saveAllDevices(@RequestBody @Valid ValidList<DeviceDTO> devices) {
+        log.info("Saving {} devices.", devices.size());
         List<DeviceDTO> savedDevices = deviceService.saveAllDevices(devices);
 
         var response = new ResponseWrapper<>(savedDevices, "All devices created", true, savedDevices.size());
 
+        log.info("Successfully created {} devices.", savedDevices.size());
         return ResponseEntity.ok(response);
     }
 
@@ -68,6 +74,7 @@ public class AdminDeviceController {
     })
     @DeleteMapping("/bulk")
     public ResponseEntity<ResponseWrapper<Object>> deleteAllDevices() {
+        log.info("Deleting all devices.");
         deviceService.deleteAllDevices();
 
         var response = new ResponseWrapper<>(
@@ -75,6 +82,7 @@ public class AdminDeviceController {
                 "Successfully deleted all devices",
                 true);
 
+        log.info("All devices successfully deleted.");
         return ResponseEntity.ok(response);
     }
 }

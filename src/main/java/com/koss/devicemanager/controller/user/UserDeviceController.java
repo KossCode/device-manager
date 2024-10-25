@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -31,9 +32,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/user/devices")
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@Slf4j
 public class UserDeviceController {
     private final DeviceService deviceService;
-
     private static final Integer MAX_ELEMENTS_PER_REQUEST = 50;
 
     @Operation(summary = "Retrieve a device by ID", description = "Fetches a specific device by its ID for the user")
@@ -44,10 +45,10 @@ public class UserDeviceController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<ResponseWrapper<DeviceDTO>> getDeviceById(@PathVariable Long id) {
+        log.info("Fetching device with ID: {}", id);
         var device = deviceService.findDeviceById(id);
-
         var response = new ResponseWrapper<>(device, "Device retrieved successfully", true);
-
+        log.info("Device with ID: {} retrieved successfully.", id);
         return ResponseEntity.ok(response);
     }
 
@@ -58,13 +59,12 @@ public class UserDeviceController {
     })
     @GetMapping("/brands/{brand}")
     public ResponseEntity<ResponseWrapper<List<DeviceDTO>>> getDevicesByBrandName(@PathVariable String brand) {
+        log.info("Fetching devices for brand: {}", brand);
         var devices = deviceService.findDevicesByBrand(brand);
-
-        var response = new ResponseWrapper<>(devices, "Devices retrieved successfully", true);
-
+        var response = new ResponseWrapper<>(devices, "Devices retrieved successfully", true, devices.size());
+        log.info("Retrieved {} devices for brand: {}", devices.size(), brand);
         return ResponseEntity.ok(response);
     }
-
 
     @Operation(summary = "Get a list of devices for the user", description = "Returns a paginated list of devices")
     @ApiResponses(value = {
@@ -73,12 +73,12 @@ public class UserDeviceController {
     })
     @GetMapping
     public ResponseEntity<ResponseWrapper<List<DeviceDTO>>> listDevices(
-            @RequestParam(name = "offset", defaultValue = "0") int offset,
+            @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "limit", defaultValue = "50") int limit) {
 
-        var pageable = PageRequest.of(offset, Math.min(limit, MAX_ELEMENTS_PER_REQUEST));
+        var pageable = PageRequest.of(page, Math.min(limit, MAX_ELEMENTS_PER_REQUEST));
+        log.info("Fetching devices with pagination - Page: {}, Limit: {}", page, limit);
         var pagedDevices = deviceService.getPaginatedDevices(pageable);
-
         var devices = pagedDevices.getContent();
         long totalElements = pagedDevices.getTotalElements();
 
@@ -86,7 +86,7 @@ public class UserDeviceController {
                 devices,
                 "Successfully fetched devices",
                 true, totalElements);
-
+        log.info("Fetched {} devices. Total elements: {}", devices.size(), totalElements);
         return ResponseEntity.ok(response);
     }
 
@@ -98,8 +98,10 @@ public class UserDeviceController {
     })
     @PostMapping
     public ResponseEntity<ResponseWrapper<DeviceDTO>> addDevice(@Valid @RequestBody DeviceDTO deviceDTO) {
+        log.info("Adding new device: {}", deviceDTO);
         var createdDevice = deviceService.addDevice(deviceDTO);
         var response = new ResponseWrapper<>(createdDevice, "Successfully created device", true);
+        log.info("Device created successfully: {}", createdDevice);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -113,8 +115,10 @@ public class UserDeviceController {
     @PutMapping("/{id}")
     public ResponseEntity<ResponseWrapper<DeviceDTO>> updateDevice(
             @PathVariable Long id, @Valid @RequestBody DeviceDTO deviceDTO) {
+        log.info("Updating device with ID: {}", id);
         var updatedDevice = deviceService.updateDevice(id, deviceDTO);
         var response = new ResponseWrapper<>(updatedDevice, "Successfully updated device entity", true);
+        log.info("Device with ID: {} updated successfully.", id);
         return ResponseEntity.ok(response);
     }
 
@@ -128,8 +132,10 @@ public class UserDeviceController {
     @PatchMapping("/{id}")
     public ResponseEntity<ResponseWrapper<DeviceDTO>> patchDevice(
             @PathVariable Long id, @RequestBody DeviceDTO deviceDTO) {
+        log.info("Patching device with ID: {}", id);
         var patchedDevice = deviceService.patchDevice(id, deviceDTO);
         var response = new ResponseWrapper<>(patchedDevice, "Successfully patched device entity", true);
+        log.info("Device with ID: {} patched successfully.", id);
         return ResponseEntity.ok(response);
     }
 
@@ -141,10 +147,11 @@ public class UserDeviceController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseWrapper<Object>> deleteDevice(@PathVariable Long id) {
+        log.info("Deleting device with ID: {}", id);
         deviceService.findDeviceById(id);
         deviceService.deleteDevice(id);
-
         var response = new ResponseWrapper<>(null, "Successfully deleted device with id " + id, true);
+        log.info("Device with ID: {} deleted successfully.", id);
         return ResponseEntity.ok(response);
     }
 }

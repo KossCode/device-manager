@@ -71,6 +71,7 @@ class UserDeviceControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success", is(true)))
                 .andExpect(jsonPath("$.data[0].name", is("Device1")))
+                .andExpect(jsonPath("$.totalElements", is(1)))
                 .andExpect(jsonPath("$.message", is("Devices retrieved successfully")));
     }
 
