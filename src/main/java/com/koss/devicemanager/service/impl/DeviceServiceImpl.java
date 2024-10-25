@@ -124,8 +124,9 @@ public class DeviceServiceImpl implements DeviceService {
      * @param id the ID of the device to delete
      */
     public void deleteDevice(Long id) {
-        //todo: findBy before delete
-        deviceRepository.deleteById(id);
+        var device = deviceRepository.findById(id)
+                .orElseThrow(() -> new DeviceNotFoundException(id));
+        deviceRepository.delete(device);
     }
 
     /**
@@ -158,5 +159,3 @@ public class DeviceServiceImpl implements DeviceService {
         deviceRepository.deleteAll();
     }
 }
-
-
