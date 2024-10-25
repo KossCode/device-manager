@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/user/brands")
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@Slf4j
 public class UserBrandController {
     private final BrandService brandService;
 
@@ -38,12 +40,14 @@ public class UserBrandController {
     })
     @GetMapping
     public ResponseEntity<ResponseWrapper<List<BrandDTO>>> getAllBrands() {
+        log.info("Fetching all brands");
         List<BrandDTO> brands = brandService.findAllBrands();
         var response = new ResponseWrapper<>(
                 brands,
                 "Successfully fetched brands",
                 true);
 
+        log.info("Fetched {} brands", brands.size());
         return ResponseEntity.ok(response);
     }
 
@@ -55,12 +59,14 @@ public class UserBrandController {
     })
     @PostMapping
     public ResponseEntity<ResponseWrapper<BrandDTO>> addBrand(@Valid @RequestBody BrandDTO brandDTO) {
+        log.info("Adding new brand: {}", brandDTO);
         var createdBrand = brandService.addBrand(brandDTO);
         var response = new ResponseWrapper<>(
                 createdBrand,
                 "Successfully created brand",
                 true);
 
+        log.info("Brand created with id: {}", createdBrand.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -75,12 +81,14 @@ public class UserBrandController {
     public ResponseEntity<ResponseWrapper<BrandDTO>> updateBrand(
             @PathVariable Long id, @Valid @RequestBody BrandDTO brandDTO) {
 
+        log.info("Updating brand with id: {}", id);
         var updatedBrand = brandService.updateBrand(id, brandDTO);
         var response = new ResponseWrapper<>(
                 updatedBrand,
                 "Successfully updated brand",
                 true);
 
+        log.info("Brand updated with id: {}", updatedBrand.getId());
         return ResponseEntity.ok(response);
     }
 
@@ -92,6 +100,7 @@ public class UserBrandController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseWrapper<Object>> deleteBrand(@PathVariable Long id) {
+        log.info("Deleting brand with id: {}", id);
         brandService.findById(id);
         brandService.deleteBrand(id);
 
@@ -100,6 +109,7 @@ public class UserBrandController {
                 "Successfully deleted brand with id " + id,
                 true);
 
+        log.info("Brand deleted with id: {}", id);
         return ResponseEntity.ok(response);
     }
 }

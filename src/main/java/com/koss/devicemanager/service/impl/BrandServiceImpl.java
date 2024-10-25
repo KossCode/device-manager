@@ -7,6 +7,7 @@ import com.koss.devicemanager.mapper.BrandMapper;
 import com.koss.devicemanager.repository.BrandRepository;
 import com.koss.devicemanager.service.BrandService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,95 +15,83 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@Slf4j
 public class BrandServiceImpl implements BrandService {
 
     private final BrandRepository brandRepository;
     private final BrandMapper brandMapper;
 
-    /**
-     * Finds a brand by its unique ID.
-     *
-     * @param id the ID of the brand to find
-     * @return the found BrandDTO or throws EntityNotFoundException if not found
-     */
-
     @Override
     public BrandDTO findById(Long id) {
+        log.info("Attempting to find brand by ID: {}", id);
         var brand = brandRepository.findById(id)
-                .orElseThrow(() -> new BrandNotFoundException(id));
+                .orElseThrow(() -> {
+                    log.error("Brand not found with ID: {}", id);
+                    return new BrandNotFoundException(id);
+                });
+        log.info("Brand found: {}", brand);
         return brandMapper.toDTO(brand);
     }
 
-    /**
-     * Retrieves a list of all brands in the database.
-     *
-     * @return a list of BrandDTO representing all brands
-     */
     @Override
     public List<BrandDTO> findAllBrands() {
-        return brandRepository.findAll().stream()
+        log.info("Retrieving all brands from the database.");
+        var brands = brandRepository.findAll().stream()
                 .map(brandMapper::toDTO)
                 .toList();
+        log.info("Number of brands retrieved: {}", brands.size());
+        return brands;
     }
 
-    /**
-     * Adds a new brand to the database.
-     *
-     * @param brandDTO the brand data to add
-     * @return the added BrandDTO after being saved in the database
-     */
     @Override
     public BrandDTO addBrand(BrandDTO brandDTO) {
+        log.info("Adding new brand: {}", brandDTO);
         var brand = brandMapper.toEntity(brandDTO);
-        return brandMapper.toDTO(brandRepository.save(brand));
+        var savedBrand = brandMapper.toDTO(brandRepository.save(brand));
+        log.info("Brand added: {}", savedBrand);
+        return savedBrand;
     }
 
-    /**
-     * Method to get an existing brand by name or create a new one if it doesn't exist.
-     *
-     * @param name the brand name to find or create
-     * @return the found or newly created brand
-     */
     @Override
     public Brand getOrCreateBrand(String name) {
+        log.info("Getting or creating brand with name: {}", name);
         var existingBrand = brandRepository.findByName(name);
 
         if (existingBrand.isPresent()) {
+            log.info("Brand already exists: {}", existingBrand.get());
             return existingBrand.get();
         }
 
         var newBrand = new Brand();
         newBrand.setName(name);
-
-        return brandRepository.save(newBrand);
+        var savedBrand = brandRepository.save(newBrand);
+        log.info("New brand created: {}", savedBrand);
+        return savedBrand;
     }
 
-    /**
-     * Updates an existing brand's information with new data.
-     *
-     * @param id              the ID of the brand to update
-     * @param updatedBrandDTO the new data to update the brand with
-     * @return the updated BrandDTO after being saved in the database
-     */
     @Override
     public BrandDTO updateBrand(Long id, BrandDTO updatedBrandDTO) {
+        log.info("Updating brand with ID: {}", id);
         var existingBrand = brandRepository.findById(id)
-                .orElseThrow(() -> new BrandNotFoundException(id));
+                .orElseThrow(() -> {
+                    log.error("Brand not found with ID: {}", id);
+                    return new BrandNotFoundException(id);
+                });
         existingBrand.setName(updatedBrandDTO.getName());
-        return brandMapper.toDTO(brandRepository.save(existingBrand));
-
+        var updatedBrand = brandMapper.toDTO(brandRepository.save(existingBrand));
+        log.info("Brand updated: {}", updatedBrand);
+        return updatedBrand;
     }
 
-    /**
-     * Deletes a brand from the database by its unique ID.
-     *
-     * @param id the ID of the brand to delete
-     */
     @Override
     public void deleteBrand(Long id) {
+        log.info("Attempting to delete brand with ID: {}", id);
         var brand = brandRepository.findById(id)
-                .orElseThrow(() -> new BrandNotFoundException(id));
+                .orElseThrow(() -> {
+                    log.error("Brand not found with ID: {}", id);
+                    return new BrandNotFoundException(id);
+                });
         brandRepository.delete(brand);
+        log.info("Brand deleted with ID: {}", id);
     }
 }
-
