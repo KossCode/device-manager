@@ -64,6 +64,17 @@ class UserDeviceControllerTest {
     }
 
     @Test
+    void testGetDevicesByBrandSuccess() throws Exception {
+        when(deviceService.findDevicesByBrand("Brand1")).thenReturn(List.of(deviceDTO));
+
+        mockMvc.perform(get("/api/v1/user/devices/brands/Brand1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success", is(true)))
+                .andExpect(jsonPath("$.data[0].name", is("Device1")))
+                .andExpect(jsonPath("$.message", is("Devices retrieved successfully")));
+    }
+
+    @Test
     void testListDevicesSuccess() throws Exception {
         PageRequest pageable = PageRequest.of(0, 50);
         List<DeviceDTO> devices = Collections.singletonList(deviceDTO);

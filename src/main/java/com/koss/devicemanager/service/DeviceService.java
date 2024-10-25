@@ -9,6 +9,8 @@ import java.util.List;
 public interface DeviceService {
     DeviceDTO findDeviceById(Long id);
 
+    List<DeviceDTO> findDevicesByBrand(String brand);
+
     List<DeviceDTO> findAllDevices();
 
     DeviceDTO addDevice(DeviceDTO deviceDTO);

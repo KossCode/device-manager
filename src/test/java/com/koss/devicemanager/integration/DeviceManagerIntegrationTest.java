@@ -84,7 +84,7 @@ class DeviceManagerIntegrationTest {
                 .andExpect(jsonPath("$.data.brand", is("BrandNew")));
 
         var devices = deviceRepository.findAll();
-        assert (devices.size() == 3); // Должно быть 3 устройства после добавления
+        assert (devices.size() == 3);
     }
 
     @Test

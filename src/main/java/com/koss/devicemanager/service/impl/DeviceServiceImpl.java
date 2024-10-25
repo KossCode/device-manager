@@ -60,6 +60,18 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     /**
+     * Finds a devices by their brand names.
+     *
+     * @param brand the name of the brand to find all related devices
+     * @return the found List of DeviceDTOs
+     */
+    @Override
+    public List<DeviceDTO> findDevicesByBrand(String brand) {
+        var byBrandName = deviceRepository.findByBrandName(brand);
+        return byBrandName.stream().map(deviceMapper::toDTO).toList();
+    }
+
+    /**
      * Adds a new device to the database. If the associated brand does not exist,
      * it will be created automatically.
      *

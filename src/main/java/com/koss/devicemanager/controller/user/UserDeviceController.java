@@ -32,7 +32,6 @@ import java.util.List;
 @RequestMapping("/api/v1/user/devices")
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class UserDeviceController {
-    //todo: prevent XSS vulnerabilities
     private final DeviceService deviceService;
 
     private static final Integer MAX_ELEMENTS_PER_REQUEST = 50;
@@ -48,6 +47,20 @@ public class UserDeviceController {
         var device = deviceService.findDeviceById(id);
 
         var response = new ResponseWrapper<>(device, "Device retrieved successfully", true);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Retrieve devices by brand name", description = "Fetches all devices by their brand name")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved the devices", content = @Content(schema = @Schema(implementation = ResponseWrapper.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ExceptionResponseWrapper.class)))
+    })
+    @GetMapping("/brands/{brand}")
+    public ResponseEntity<ResponseWrapper<List<DeviceDTO>>> getDevicesByBrandName(@PathVariable String brand) {
+        var devices = deviceService.findDevicesByBrand(brand);
+
+        var response = new ResponseWrapper<>(devices, "Devices retrieved successfully", true);
 
         return ResponseEntity.ok(response);
     }
